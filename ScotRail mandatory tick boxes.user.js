@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name ScotRail mandatory tick boxes
 // @description Automatically tick the mandatory boxes on the ScotRail buy tickets website.
-// @version 1
+// @version 2
 // @author Simon Arlott
 // @license GPL-3.0+
 // @include https://www.buytickets.scotrail.co.uk/buytickets/payment.aspx
@@ -25,7 +25,6 @@ for (i = 0; i < len; i++) {
       if (input.getAttribute("value") == "off") {
         input.checked = true;
       }
-      input.disabled = true;
     }
   }
 }
@@ -39,7 +38,6 @@ var terms = document.getElementById("ShoppingBasket_TermsAndConditions");
 
 if (terms != null) {
   terms.checked = true;
-  terms.disabled = true;
 }
 
 /* 😀 🙈 */
