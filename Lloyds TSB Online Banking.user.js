@@ -30,6 +30,9 @@ body .m-container { max-width: 1600px !important; }
 
 /* Remember this device popup */
 #browserRegRetail { display: none !important; }
+
+div.layout-side { float: none !important; }
+div.layout-content { padding-left: 10px !important; padding-right: 10px !important; }
 `);
 
 var spans = document.getElementsByTagName('span');
