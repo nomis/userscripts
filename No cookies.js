@@ -9,6 +9,8 @@
 // ==/UserScript==
 
 function noCookies() {
+  console.debug(`Checking cookie prompts`);
+
   var manageCookie = document.getElementById("manageCookie");
   if (manageCookie) {
     console.debug(`Found manageCookie: ${manageCookie.innerText}`);
@@ -106,16 +108,31 @@ function noCookies() {
 
 noCookies();
 
-var observer = new MutationObserver(resetTimer);
-var timer = setTimeout(action, 3000, observer); // wait for the page to stay still for 3 seconds
-observer.observe(document, {childList: true, subtree: true});
+var checkInterval = 100; // Check for changes every 100ms
+var waitInterval = 3000; // Stop when there have been no changes for 3000ms
+var observer = new MutationObserver(observedChanges);
+var checkTimer = setTimeout(startObserving, checkInterval, observer);
+var stopTimer = null;
 
-function resetTimer(changes, observer) {
-  clearTimeout(timer);
+function observedChanges(changes, observer) {
+  //console.debug(`Changes observed`);
+  observer.disconnect();
+  //console.debug(`Stopped observing DOM changes`);
+  clearTimeout(stopTimer);
   noCookies();
-  timer = setTimeout(action, 3000, observer);
+  checkTimer = setTimeout(startObserving, checkInterval, observer);
 }
 
-function action(o) {
-  o.disconnect();
+function startObserving(observer) {
+  noCookies();
+  //console.debug(`Start observing DOM changes`);
+  observer.observe(document, {childList: true, subtree: true});
+  stopTimer = setTimeout(stopObserving, waitInterval, observer);
+}
+
+function stopObserving(observer) {
+  observer.disconnect();
+  console.debug(`Finished observing DOM changes`);
+  clearTimeout(stopTimer);
+  clearTimeout(checkTimer);
 }
