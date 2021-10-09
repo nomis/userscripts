@@ -86,22 +86,29 @@ function noCookies() {
   }
 
   var govuk_cookie_banner = document.querySelectorAll("div.govuk-cookie-banner");
-  if (govuk_cookie_banner.length == 1) {
+  if (govuk_cookie_banner.length == 1 && !(govuk_cookie_banner[0].offsetParent === null)) {
     console.debug(`Found govuk_cookie_banner: ${govuk_cookie_banner[0].innerText}`);
 
     var buttons = govuk_cookie_banner[0].querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
-      if (/Reject analytics cookies/.test(buttons[i].innerText)) {
+      if (/Reject (additional|analytics) cookies/.test(buttons[i].innerText)) {
       	console.debug(`Found reject button: ${buttons[i].innerText}`);
         buttons[i].click();
       }
     }
 
-    // Now you're just being deliberately annoying
-    if (/(You.ve rejected analytics cookies|We.d like to set additional cookies to understand how you use)/.test(govuk_cookie_banner[0].innerText)) {
-      console.debug(`Found govuk_cookie_banner: ${govuk_cookie_banner[0].innerText}`);
+    var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
+    if (confirmation.length == 1 && !(confirmation[0].offsetParent === null)) {
+      console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
 
-      govuk_cookie_banner[0].setAttribute("style", "display: none");
+      // Now you're just being deliberately annoying
+      var buttons = confirmation[0].querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        if (/Hide this message/.test(buttons[i].innerText)) {
+          console.debug(`Found hide button: ${buttons[i].innerText}`);
+          buttons[i].click();
+        }
+      }
     }
   }
 }
