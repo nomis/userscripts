@@ -3,16 +3,21 @@
 // @version        1
 // @author         Simon Arlott
 // @license        GPL-3.0+
-// @include        https://*
+// @include        http*://*
 // @grant          none
 // @run-at         document-idle
 // ==/UserScript==
+
+
+function visible(element) {
+  return element && !(element.offsetParent === null);
+}
 
 function noCookies() {
   console.debug(`Checking cookie prompts`);
 
   var manageCookie = document.getElementById("manageCookie");
-  if (manageCookie) {
+  if (visible(manageCookie)) {
     console.debug(`Found manageCookie: ${manageCookie.innerText}`);
 
     if (manageCookie.innerText == "Cookie Settings") {
@@ -50,7 +55,7 @@ function noCookies() {
   }
 
   var euOverlayContainer = document.getElementById("euOverlayContainer");
-  if (euOverlayContainer && !(euOverlayContainer.offsetParent === null)) {
+  if (visible(euOverlayContainer)) {
     console.debug(`Found euOverlayContainer: ${euOverlayContainer.innerText}`);
 
     if (/Cookie Preferences/.test(euOverlayContainer.innerText)) {
@@ -64,7 +69,7 @@ function noCookies() {
   }
 
   var cookiePolicy = document.querySelectorAll("div.cookiePolicy");
-  if (cookiePolicy.length == 1 && !(cookiePolicy[0].offsetParent === null)) {
+  if (cookiePolicy.length == 1 && visible(cookiePolicy[0])) {
     console.debug(`Found cookiePolicy: ${cookiePolicy[0].innerText}`);
 
     if (/This site uses cookies and by using the site you are consenting to this/.test(cookiePolicy[0].innerText)) {
@@ -75,7 +80,7 @@ function noCookies() {
   }
 
   var cookie_banner_wrapper = document.getElementById("cookie-banner-wrapper");
-  if (cookie_banner_wrapper && !(cookie_banner_wrapper.offsetParent === null)) {
+  if (visible(cookie_banner_wrapper)) {
     console.debug(`Found cookie-banner-wrapper: ${cookie_banner_wrapper.innerText}`);
 
     if (/We use cookies to provide you with the best possible online experience/.test(cookie_banner_wrapper.innerText)) {
@@ -86,7 +91,7 @@ function noCookies() {
   }
 
   var govuk_cookie_banner = document.querySelectorAll("div.govuk-cookie-banner");
-  if (govuk_cookie_banner.length == 1 && !(govuk_cookie_banner[0].offsetParent === null)) {
+  if (govuk_cookie_banner.length == 1 && visible(govuk_cookie_banner[0])) {
     console.debug(`Found govuk_cookie_banner: ${govuk_cookie_banner[0].innerText}`);
 
     var buttons = govuk_cookie_banner[0].querySelectorAll("button");
@@ -98,7 +103,7 @@ function noCookies() {
     }
 
     var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
-    if (confirmation.length == 1 && !(confirmation[0].offsetParent === null)) {
+    if (confirmation.length == 1 && visible(confirmation[0])) {
       console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
 
       // Now you're just being deliberately annoying
@@ -107,6 +112,58 @@ function noCookies() {
         if (/Hide this message/.test(buttons[i].innerText)) {
           console.debug(`Found hide button: ${buttons[i].innerText}`);
           buttons[i].click();
+        }
+      }
+    }
+  }
+
+  var tealiumGDPRecModal = document.getElementById("__tealiumGDPRecModal");
+  if (visible(tealiumGDPRecModal)) {
+    console.debug(`Found tealiumGDPRecModal`);
+
+    var choose = tealiumGDPRecModal.querySelector("#let_me_choose");
+    if (choose) {
+      console.debug(`Found #let_me_choose: ${choose.innerText}`);
+      choose.click();
+    }
+  }
+
+  var tealiumGDPRcpPrefs = document.getElementById("__tealiumGDPRcpPrefs");
+  if (visible(tealiumGDPRcpPrefs)) {
+    var found = 0;
+    var inputs = tealiumGDPRcpPrefs.querySelectorAll("input[type=radio]");
+    for (var i = 0; i < inputs.length; i++) {
+      var label = tealiumGDPRcpPrefs.querySelector(`label[for=${inputs[i].id}]`);
+      if (!label) {
+        console.debug(`Radio input ${inputs[i].id} with no label`);
+        return;
+      } if (label.innerText == "No") {
+        console.debug(`Selecting ${inputs[i].id}: ${label.innerText}`);
+        inputs[i].click();
+
+        if (inputs[i].checked) {
+				  found++;
+        }
+      } else if (label.innerText != "Yes") {
+        console.debug(`Unknown radio input ${inputs[i].id}: ${label.innerText}`);
+        return;
+      }
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+      var label = tealiumGDPRcpPrefs.querySelector(`label[for=${inputs[i].id}]`);
+      if ((label.innerText == "Yes" && inputs[i].checked) || (label.innerText == "No" && !inputs[i].checked)) {
+        console.debug(`Invalid selection: ${inputs[i].id}: ${label.innerText} (${inputs[i].checked})`);
+      }
+    }
+
+    if (found >= 2) {
+      var prefsSubmit = tealiumGDPRcpPrefs.querySelector("#preferences_prompt_submit");
+      if (prefsSubmit) {
+        console.debug(`Found #preferences_prompt_submit: ${prefsSubmit.innerText}`);
+
+        if (/Save preferences/.test(prefsSubmit.innerText)) {
+          prefsSubmit.click();
         }
       }
     }
