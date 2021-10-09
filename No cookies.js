@@ -58,7 +58,7 @@ function noCookies() {
   if (visible(euOverlayContainer)) {
     console.debug(`Found euOverlayContainer: ${euOverlayContainer.innerText}`);
 
-    if (/Cookie Preferences/.test(euOverlayContainer.innerText)) {
+    if (/^Cookie Preferences$/.test(euOverlayContainer.innerText)) {
       var inputs = euOverlayContainer.querySelectorAll("input[value=Decline][alt=Decline][title=Decline]");
       console.debug(`Inputs: ${inputs.length}`);
       if (inputs.length == 1) {
@@ -72,7 +72,7 @@ function noCookies() {
   if (cookiePolicy.length == 1 && visible(cookiePolicy[0])) {
     console.debug(`Found cookiePolicy: ${cookiePolicy[0].innerText}`);
 
-    if (/This site uses cookies and by using the site you are consenting to this/.test(cookiePolicy[0].innerText)) {
+    if (/^This site uses cookies and by using the site you are consenting to this/.test(cookiePolicy[0].innerText)) {
       console.debug(`Found illegal claim`);
 
       cookiePolicy[0].setAttribute("style", "display: none");
@@ -83,7 +83,7 @@ function noCookies() {
   if (visible(cookie_banner_wrapper)) {
     console.debug(`Found cookie-banner-wrapper: ${cookie_banner_wrapper.innerText}`);
 
-    if (/We use cookies to provide you with the best possible online experience/.test(cookie_banner_wrapper.innerText)) {
+    if (/^We use cookies to provide you with the best possible online experience/.test(cookie_banner_wrapper.innerText)) {
       console.debug(`Found useless message`);
 
       cookie_banner_wrapper.setAttribute("style", "display: none");
@@ -96,7 +96,7 @@ function noCookies() {
 
     var buttons = govuk_cookie_banner[0].querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
-      if (/Reject (additional|analytics) cookies/.test(buttons[i].innerText)) {
+      if (/^Reject (additional|analytics) cookies$/.test(buttons[i].innerText)) {
       	console.debug(`Found reject button: ${buttons[i].innerText}`);
         buttons[i].click();
       }
@@ -109,7 +109,7 @@ function noCookies() {
       // Now you're just being deliberately annoying
       var buttons = confirmation[0].querySelectorAll("button");
       for (var i = 0; i < buttons.length; i++) {
-        if (/Hide this message/.test(buttons[i].innerText)) {
+        if (/^Hide this message$/.test(buttons[i].innerText)) {
           console.debug(`Found hide button: ${buttons[i].innerText}`);
           buttons[i].click();
         }
@@ -162,7 +162,7 @@ function noCookies() {
       if (prefsSubmit) {
         console.debug(`Found #preferences_prompt_submit: ${prefsSubmit.innerText}`);
 
-        if (/Save preferences/.test(prefsSubmit.innerText)) {
+        if (/^Save preferences$/.test(prefsSubmit.innerText)) {
           prefsSubmit.click();
         }
       }
