@@ -168,6 +168,51 @@ function noCookies() {
       }
     }
   }
+
+  if (/^https:\/\/consent\.google\.co\.uk\//.test(document.location.href)) {
+    console.debug(`Google consent page`);
+
+    var labelled = new Map();
+    var buttons = document.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (visible(buttons[i])) {
+        console.debug(`"${i}: ${buttons[i].getAttribute("aria-label")}"`);
+        if (/More options for ad personalization/.test(buttons[i].getAttribute("aria-label"))) {
+          buttons[i].click();
+          continue;
+        }
+
+        var list = labelled.get(buttons[i].innerText);
+        if (!list) {
+          list = [];
+          labelled.set(buttons[i].innerText, list);
+        }
+        list.push(buttons[i]);
+      }
+    }
+
+    console.debug(`Buttons: ${Array.from(labelled.entries())}`);
+
+    if (buttons.length == 2 && labelled.get("I agree") && labelled.get("Customize")) {
+      console.debug(`Found customise button`);
+
+      labelled.get("Customize")[0].click();
+    }
+
+    if (labelled.size == 3 && labelled.get("On") && labelled.get("Off") && labelled.get("Confirm") && labelled.get("On").length == labelled.get("Off").length) {
+      console.debug(`Found on/off/confirm buttons`);
+
+      var off = labelled.get("Off")
+      for (var i = 0; i < off.length; i++) {
+        off[i].click();
+      }
+
+      var confirm = labelled.get("Confirm");
+      if (confirm.length == 1) {
+        confirm[0].click();
+      }
+    }
+  }
 }
 
 noCookies();
