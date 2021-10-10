@@ -213,6 +213,22 @@ function noCookies() {
       }
     }
   }
+
+  var js_consent_banner = document.querySelector("div.js-consent-banner");
+  if (visible(js_consent_banner)) {
+    console.debug(`Found js-consent-banner`);
+
+    var buttons = document.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].innerText == "Customize settings") {
+        console.debug(`Found customise button`);
+
+        // Tries to load JavaScript from cookielaw.org which isn't allowed so it doesn't work properly
+        //buttons[i].click();
+        js_consent_banner.setAttribute("style", "display: none");
+      }
+    }
+  }
 }
 
 noCookies();
