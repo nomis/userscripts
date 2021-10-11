@@ -58,7 +58,7 @@ function noCookies() {
   if (visible(euOverlayContainer)) {
     console.debug(`Found euOverlayContainer: ${euOverlayContainer.innerText}`);
 
-    if (/^Cookie Preferences$/.test(euOverlayContainer.innerText)) {
+    if (/Cookie Preferences/.test(euOverlayContainer.innerText)) {
       var inputs = euOverlayContainer.querySelectorAll("input[value=Decline][alt=Decline][title=Decline]");
       console.debug(`Inputs: ${inputs.length}`);
       if (inputs.length == 1) {
