@@ -229,6 +229,18 @@ function noCookies() {
       }
     }
   }
+
+  var ovh_banner = document.querySelector("div.manager-cookie-policy-banner");
+  if (visible(ovh_banner)) {
+    console.debug(`Found ovh banner`);
+    var buttons = document.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (visible(buttons[i]) && buttons[i].innerText == "Continue without accepting") {
+        console.debug(`Found deny button`);
+        buttons[i].click();
+      }
+    }
+  }
 }
 
 noCookies();
