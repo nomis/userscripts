@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Lloyds TSB Online Banking
-// @version        2
+// @version        3
 // @author         Simon Arlott
 // @license        GPL-3.0+
 // @include        https://*.tsb.co.uk/*
@@ -50,6 +50,87 @@ for (var i = 0; i < l; i++) {
   if (options[i].innerText.length == 2 && (options[i].innerText.substring(0, 1) == " " || options[i].innerText.substring(0, 1) == "\u00A0")) {
     console.log("Fixing login box " + i);
     options[i].innerText = options[i].innerText.substring(1);
+  }
+}
+
+/* Empty interstitial page */
+if (window.location.href.endsWith("/interstitialpage.jsp")) {
+  var cont = document.getElementById("frmMdlSAN:continueBtnSAN");
+  if (cont && cont.value == "Continue to your accounts") {
+    console.debug("Found continueBtnSAN");
+
+    var panel = document.querySelector("div.panel");
+    console.debug(`Panel text: "${panel.innerText}"`);
+    if (panel.innerText == "") {
+      console.debug("Clicking continueBtnSAN");
+      cont.click();
+    }
+  }
+}
+
+function visible(element) {
+  return element && !(element.offsetParent === null);
+}
+
+function clickSMScontinue() {
+  var sca_2fa = document.getElementById("sca-2fa");
+  if (visible(sca_2fa)) {
+    console.debug("Found sca-2fa");
+
+    var buttons = sca_2fa.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (visible(buttons[i]) && buttons[i].innerText == "Continue") {
+        console.debug("Found continue button");
+        buttons[i].click();
+      }
+    }
+  }
+}
+
+// This requires several DOM changes before it's loaded
+function checkSMS() {
+  var sca_2fa = document.getElementById("sca-2fa");
+  if (visible(sca_2fa)) {
+    console.debug("Found sca-2fa");
+
+    var skip = 0;
+
+    var inputs = sca_2fa.querySelectorAll("input");
+    for (var i = 0; i < inputs.length; i++) {
+      if (visible(inputs[i])) {
+        skip = 1;
+      } else {
+        console.debug(`Invisible input ${inputs[i].name}`);
+        continue;
+      }
+
+      if (inputs[i].name == "passcode") {
+        console.debug("Found passcode input");
+
+        inputs[i].addEventListener("keydown", function(e) {
+          if (!e) { var e = window.event; }
+          //e.preventDefault();
+
+          if (e.keyCode == 13 || e.keyCode == 10) { clickSMScontinue(); }
+        }, false);
+
+        console.debug("Added event listener");
+      }
+
+      if (inputs[i].name == "deviceCheck" && inputs[i].id == "no") {
+        console.debug("Found \"no\" input");
+
+        inputs[i].click();
+        clickSMScontinue();
+      }
+    }
+
+    if (!skip) {
+      console.debug("No inputs");
+      clickSMScontinue();
+    } else {
+      console.debug("Inputs exist");
+    }
   }
 }
 
@@ -226,6 +307,35 @@ function openStatements() {
 }
 
 setTimeout(openStatements, 100);
+
+var checkInterval = 100; // Check for changes every 100ms
+var waitInterval = 3000; // Stop when there have been no changes for 3000ms
+var observer = new MutationObserver(observedChanges);
+var checkTimer = setTimeout(startObserving, checkInterval, observer);
+var stopTimer = null;
+
+function observedChanges(changes, observer) {
+  //console.debug(`Changes observed`);
+  observer.disconnect();
+  //console.debug(`Stopped observing DOM changes`);
+  clearTimeout(stopTimer);
+  checkSMS();
+  checkTimer = setTimeout(startObserving, checkInterval, observer);
+}
+
+function startObserving(observer) {
+  checkSMS();
+  //console.debug(`Start observing DOM changes`);
+  observer.observe(document, {childList: true, subtree: true});
+  stopTimer = setTimeout(stopObserving, waitInterval, observer);
+}
+
+function stopObserving(observer) {
+  observer.disconnect();
+  console.debug(`Finished observing DOM changes`);
+  clearTimeout(stopTimer);
+  clearTimeout(checkTimer);
+}
 
 console.debug("Loaded");
 
