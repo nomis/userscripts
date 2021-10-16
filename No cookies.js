@@ -253,6 +253,23 @@ function noCookies() {
       }
     }
   }
+
+  var reddit = document.querySelectorAll("a[href='https://www.redditinc.com/policies/cookie-notice']");
+  for (var i = 0; i < reddit.length; i++) {
+    if (visible(reddit[i])) {
+      if (/We use cookies on our websites/.test(reddit[i].parentNode.innerText)) {
+        console.debug(`Found reddit cookie link`);
+
+        var buttons = reddit[i].parentNode.parentNode.querySelectorAll("button");
+        for (var i = 0; i < buttons.length; i++) {
+          if (visible(buttons[i]) && buttons[i].innerText == "Reject non-essential") {
+            console.debug(`Found reject button`);
+            buttons[i].click();
+          }
+        }
+      }
+    }
+  }
 }
 
 noCookies();
