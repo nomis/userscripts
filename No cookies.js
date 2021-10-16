@@ -218,7 +218,7 @@ function noCookies() {
   if (visible(js_consent_banner)) {
     console.debug(`Found js-consent-banner`);
 
-    var buttons = document.querySelectorAll("button");
+    var buttons = js_consent_banner.querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
       if (buttons[i].innerText == "Customize settings") {
         console.debug(`Found customise button`);
@@ -233,7 +233,19 @@ function noCookies() {
   var ovh_banner = document.querySelector("div.manager-cookie-policy-banner");
   if (visible(ovh_banner)) {
     console.debug(`Found ovh banner`);
-    var buttons = document.querySelectorAll("button");
+    var buttons = ovh_banner.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (visible(buttons[i]) && buttons[i].innerText == "Continue without accepting") {
+        console.debug(`Found deny button`);
+        buttons[i].click();
+      }
+    }
+  }
+
+  var ovh_banner2 = document.getElementById("header_tc_privacy");
+  if (visible(ovh_banner2)) {
+    console.debug(`Found ovh banner2`);
+    var buttons = ovh_banner2.querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
       if (visible(buttons[i]) && buttons[i].innerText == "Continue without accepting") {
         console.debug(`Found deny button`);
