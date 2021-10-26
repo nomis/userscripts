@@ -102,6 +102,11 @@ function noCookies() {
       }
     }
 
+    if (buttons.length == 0) {
+      console.debug(`Banner has no buttons`);
+      govuk_cookie_banner[0].setAttribute("style", "display: none");
+    }
+
     var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
     if (confirmation.length == 1 && visible(confirmation[0])) {
       console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
