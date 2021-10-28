@@ -91,9 +91,6 @@ function noCookies() {
   }
 
   var govuk_cookie_banner = document.querySelectorAll("div.govuk-cookie-banner");
-  if (govuk_cookie_banner.length == 0) {
-    govuk_cookie_banner = document.querySelectorAll("div.cbanner-govuk-cookie-banner");
-  }
   if (govuk_cookie_banner.length == 1 && visible(govuk_cookie_banner[0])) {
     console.debug(`Found govuk_cookie_banner: ${govuk_cookie_banner[0].innerText}`);
 
@@ -103,16 +100,6 @@ function noCookies() {
       	console.debug(`Found reject button: ${buttons[i].innerText}`);
         buttons[i].click();
       }
-
-      if (/^Hide this message$/.test(buttons[i].innerText)) {
-        console.debug(`Found hide button: ${buttons[i].innerText}`);
-        buttons[i].click();
-      }
-    }
-
-    if (buttons.length == 0) {
-      console.debug(`Banner has no buttons`);
-      govuk_cookie_banner[0].setAttribute("style", "display: none");
     }
 
     var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
@@ -279,6 +266,73 @@ function noCookies() {
             console.debug(`Found reject button`);
             buttons[i].click();
           }
+        }
+      }
+    }
+  }
+
+  var cookie_consent = document.querySelector("div.cookie-consent");
+  if (visible(cookie_consent)) {
+    console.debug(`Found cookie_consent`);
+    var buttons = cookie_consent.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      if (visible(buttons[i]) && buttons[i].innerText == "Manage settings") {
+        console.debug(`Found manage settings button`);
+        buttons[i].click();
+      }
+    }
+
+    var tabs = cookie_consent.querySelectorAll('[role="tab"]');
+    console.debug(`Tabs: ${tabs.length}`);
+    var current = tabs.length;
+    for (var i = 0; i < tabs.length; i++) {
+      if (!visible(tabs[i]))
+        continue;
+
+      if (tabs[i].getAttribute("aria-selected") == "true") {
+        console.debug(`Found current tab: ${tabs[i].innerText}`);
+        current = i;
+
+        var on = 0;
+        var off = 0;
+        var inputs = cookie_consent.querySelectorAll('input[role="switch"]');
+        for (var j = 0; j < inputs.length; j++) {
+          if (visible(inputs[j])) {
+            console.debug(`Found input: ${inputs[j].name} (${inputs[j].checked})`);
+            if (inputs[j].checked) {
+              on++;
+            } else {
+              off++;
+            }
+          }
+        }
+
+        console.debug(`Total on ${on}, off ${off}`);
+
+        if (i == 0 && /^Strictly necessary cookies$/.test(tabs[i].innerText)) {
+          if (on != 0) {
+            current = tabs.length; // abort
+          }
+        } else if (on != 0 || off == 0) {
+          current = tabs.length; // abort
+        }
+      } else if (tabs[i].getAttribute("aria-selected") == "false" && i == current + 1) {
+        console.debug(`Found next tab: ${tabs[i].innerText}`);
+        tabs[i].click();
+        setTimeout(noCookies, 100);
+      } else {
+        console.debug(`Found tab: ${tabs[i].innerText} (${tabs[i].getAttribute("aria-selected")})`);
+      }
+    }
+
+    if (current == tabs.length - 1) {
+      console.debug(`Finished selections`);
+
+      var buttons = cookie_consent.querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        if (visible(buttons[i]) && /^CONFIRM MY CHOICES$/.test(buttons[i].innerText)) {
+          console.debug(`Found confirm button`);
+          buttons[i].click();
         }
       }
     }
