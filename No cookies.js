@@ -337,6 +337,49 @@ function noCookies() {
       }
     }
   }
+
+  var cookie_consent = document.querySelector("cookie-consent");
+  if (visible(cookie_consent) && cookie_consent.shadowRoot) {
+    console.debug(`Found cookie-consent shadowRoot element`);
+    var div = cookie_consent.shadowRoot.querySelector("div");
+    console.debug(`First div: ${div.innerText}`);
+    if (/ uses cookies /.test(div.innerText)) {
+      console.debug(`Found "uses cookies" banner`);
+      var buttons = div.querySelectorAll("button");
+      if (buttons.length == 1 && visible(buttons[0]) && buttons[0].innerText == "Continue") {
+        console.debug(`Found illegal banner`);
+        cookie_consent.parentNode.removeChild(cookie_consent);
+      }
+    }
+  }
+
+  var cookieMgn = document.getElementById("cookieMgn");
+  if (visible(cookieMgn)) {
+    console.debug(`Found cookieMgn element`);
+    if (/ uses cookies /.test(cookieMgn.innerText)) {
+      console.debug(`Found "uses cookies" banner`);
+      var a = cookieMgn.querySelectorAll("a");
+      if (a.length == 2 && a[0].innerText == "change the cookie settings and view our cookie policy" && a[1].innerText == "Continue") {
+        console.debug(`Found illegal banner`);
+        cookieMgn.parentNode.removeChild(cookieMgn);
+      }
+    }
+  }
+
+  var fil_cookie_policy = document.querySelector("section.fil-cookie-policy");
+  if (visible(fil_cookie_policy)) {
+    console.debug(`Found fil-cookie-policy element`);
+    if (/ uses cookies /.test(fil_cookie_policy.innerText)) {
+      console.debug(`Found "uses cookies" banner`);
+      var buttons = fil_cookie_policy.querySelectorAll("button");
+      if (buttons.length == 1 && visible(buttons[0]) && buttons[0].innerText == "Continue") {
+        console.debug(`Found illegal banner`);
+        fil_cookie_policy.parentNode.removeChild(fil_cookie_policy);
+      }
+    }
+  }
+
+  console.debug(`Checked cookie prompts`);
 }
 
 noCookies();
