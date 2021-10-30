@@ -101,17 +101,19 @@ function noCookies() {
         buttons[i].click();
       }
     }
+  }
 
-    var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
-    if (confirmation.length == 1 && visible(confirmation[0])) {
-      console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
+  var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
+  if (confirmation.length == 1 && visible(confirmation[0])) {
+    console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
 
+    if (/^You.ve rejected additional cookies/.test(confirmation[0].innerText)) {
       // Now you're just being deliberately annoying
       var buttons = confirmation[0].querySelectorAll("button");
-      for (var i = 0; i < buttons.length; i++) {
-        if (/^Hide this message$/.test(buttons[i].innerText)) {
-          console.debug(`Found hide button: ${buttons[i].innerText}`);
-          buttons[i].click();
+      if (buttons.length == 1 && visible(buttons[0])) {
+        if (/^Hide\b/.test(buttons[0].innerText)) {
+          console.debug(`Found hide button: ${buttons[0].innerText}`);
+          buttons[0].click();
         }
       }
     }
