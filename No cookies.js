@@ -91,6 +91,9 @@ function noCookies() {
   }
 
   var govuk_cookie_banner = document.querySelectorAll("div.govuk-cookie-banner");
+  if (govuk_cookie_banner.length == 0) {
+    govuk_cookie_banner = document.querySelectorAll("div.cbanner-govuk-cookie-banner");
+  }
   if (govuk_cookie_banner.length == 1 && visible(govuk_cookie_banner[0])) {
     console.debug(`Found govuk_cookie_banner: ${govuk_cookie_banner[0].innerText}`);
 
@@ -99,6 +102,13 @@ function noCookies() {
       if (/^Reject (additional|analytics) cookies$/.test(buttons[i].innerText)) {
       	console.debug(`Found reject button: ${buttons[i].innerText}`);
         buttons[i].click();
+      }
+    }
+
+    if (buttons.length == 1 && visible(buttons[0])) {
+      if (/^Hide\b/.test(buttons[0].innerText)) {
+        console.debug(`Found hide button: ${buttons[0].innerText}`);
+        buttons[0].click();
       }
     }
 
