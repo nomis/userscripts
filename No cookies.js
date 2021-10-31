@@ -101,6 +101,12 @@ function noCookies() {
         buttons[i].click();
       }
     }
+
+    if (buttons.length == 0 && /^You.ve rejected .+ cookies/.test(govuk_cookie_banner[0].innerText)) {
+      // Now you're just being deliberately annoying
+      console.debug(`Found useless message`);
+      govuk_cookie_banner[0].parentNode.removeChild(govuk_cookie_banner[0]);
+    }
   }
 
   var confirmation = document.querySelectorAll("div.gem-c-cookie-banner__confirmation");
