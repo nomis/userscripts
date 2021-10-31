@@ -381,6 +381,75 @@ function noCookies() {
     }
   }
 
+  if (/^https:\/\/consent\.yahoo\.com\//.test(document.location.href)) {
+    console.debug(`Yahoo consent page`);
+
+    var links = document.querySelectorAll('a[role="button"]');
+    for (var i = 0; i < links.length; i++) {
+      if (visible(links[i])) {
+        if (/^Manage settings$/.test(links[i].innerText)) {
+          console.debug(`Found manage settings link`);
+          links[i].click();
+        }
+      }
+    }
+
+    var accepts = 0;
+    var rejects = 0;
+    var on = 0;
+    var off = 0;
+    var expands = 0;
+    var unknowns = 0;
+    var labels = document.querySelectorAll("label");
+    for (var i = 0; i < labels.length; i++) {
+      if (visible(labels[i])) {
+        if (labels[i].innerText == "ON") {
+          on++;
+          labels[i].click();
+        } else if (labels[i].innerText == "OFF") {
+          off++;
+        } else if (labels[i].innerText == "...more") {
+        } else if (labels[i].innerText == "Accept all") {
+          accepts++;
+        } else if (labels[i].innerText == "Reject all") {
+          rejects++;
+          labels[i].click();
+        } else if (/^View by /.test(labels[i].innerText) || /^toggle-(iab-|google-partners$)/.test(labels[i].getAttribute("for"))) {
+          expands++;
+        } else {
+          unknowns++;
+          console.debug(`Unknown label: ${labels[i].innerText} (${labels[i].getAttribute("for")})`);
+        }
+      }
+    }
+    console.debug(`Summary: accepts=${accepts} rejects=${rejects} on=${on} off=${off} expands=${expands} unknowns=${unknowns}`);
+    if (accepts >= 3 && rejects == 0 && on == 0 && off > 10 && expands > 0 && unknowns == 0) {
+      var buttons = document.querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        if (visible(buttons[i])) {
+          if (/^Save and continue$/.test(buttons[i].innerText)) {
+            console.debug(`Found continue button`);
+            buttons[i].click();
+          }
+        }
+      }
+    }
+  }
+
+  if (/^https:\/\/guce\.yahoo\.com\//.test(document.location.href)) {
+    console.debug(`Yahoo broken redirect page: ${document.documentElement.innerText}`);
+
+    if (document.documentElement.innerText == "If you are not redirected, click here") {
+      var links = document.querySelectorAll('a');
+      if (links.length == 1 && visible(links[0])) {
+        if (links[0].innerText == "here") {
+          console.debug(`Found "here" link`);
+          links[0].click();
+        }
+      }
+    }
+  }
+
   console.debug(`Checked cookie prompts`);
 }
 
