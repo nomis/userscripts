@@ -466,6 +466,21 @@ function noCookies() {
     }
   }
 
+  var cookie_bar__content = document.querySelector("div.cookie-bar__content");
+  if (visible(cookie_bar__content)) {
+    console.debug(`Found cookie-bar__content element`);
+    if (/^This website uses .+ cookies /.test(cookie_bar__content.innerText)) {
+      console.debug(`Found "uses cookies" banner`);
+      var buttons = cookie_bar__content.querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        if (visible(buttons[i]) && buttons[i].innerText == "Decline") {
+          console.debug(`Found decline button`);
+          buttons[i].click();
+        }
+      }
+    }
+  }
+
   console.debug(`Checked cookie prompts`);
 }
 
