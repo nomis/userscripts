@@ -123,7 +123,7 @@ function noCookies() {
   if (confirmation.length == 1 && visible(confirmation[0])) {
     console.debug(`Found gem-c-cookie-banner__confirmation: ${confirmation[0].innerText}`);
 
-    if (/^You.ve rejected additional cookies/.test(confirmation[0].innerText)) {
+    if (/^You(.ve| have) rejected additional cookies/.test(confirmation[0].innerText)) {
       // Now you're just being deliberately annoying
       var buttons = confirmation[0].querySelectorAll("button");
       if (buttons.length == 1 && visible(buttons[0])) {
