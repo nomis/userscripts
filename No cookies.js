@@ -209,6 +209,8 @@ function noCookies() {
       }
     }
 
+    labelled.delete("English");
+
     console.debug(`Buttons: ${Array.from(labelled.entries())}`);
 
     if (buttons.length == 2 && labelled.get("I agree") && labelled.get("Customize")) {
