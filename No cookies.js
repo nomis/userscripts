@@ -194,7 +194,7 @@ function noCookies() {
     var buttons = document.querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
       if (visible(buttons[i])) {
-        console.debug(`"${i}: ${buttons[i].getAttribute("aria-label")}"`);
+        console.debug(`"${i}: ${buttons[i].innerText}; ${buttons[i].getAttribute("aria-label")}"`);
         if (/More options for ad personalization/.test(buttons[i].getAttribute("aria-label"))) {
           buttons[i].click();
           continue;
@@ -211,9 +211,9 @@ function noCookies() {
 
     labelled.delete("English");
 
-    console.debug(`Buttons: ${Array.from(labelled.entries())}`);
+    console.debug(`Labelled buttons (${labelled.size}): ${Array.from(labelled.entries())}`);
 
-    if (buttons.length == 2 && labelled.get("I agree") && labelled.get("Customize")) {
+    if (labelled.size == 2 && labelled.get("I agree") && labelled.get("Customize")) {
       console.debug(`Found customise button`);
 
       labelled.get("Customize")[0].click();
