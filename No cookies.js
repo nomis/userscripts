@@ -483,6 +483,31 @@ function noCookies() {
     }
   }
 
+  var cmpBanner = document.querySelector("div.gdpr #cmpBanner");
+  if (visible (cmpBanner)) {
+    console.debug(`Found cmpBanner element`);
+
+    var purpPopup = document.querySelector("div.gdpr #purpPopup");
+    if (visible(purpPopup)) {
+      console.debug(`Found purpPopup element`);
+      var buttons = purpPopup.querySelectorAll("button");
+      for (var i = 0; i < buttons.length; i++) {
+        if (visible(buttons[i]) && buttons[i].innerText == "Reject All") {
+          console.debug(`Found reject button`);
+          buttons[i].click();
+        }
+      }
+    } else {
+      var links = cmpBanner.querySelectorAll("a");
+			for (var i = 0; i < links.length; i++) {
+	      if (visible(links[i]) && links[i].innerText == "Manage") {
+	        console.debug(`Found manage link`);
+	        links[i].click();
+	      }
+      }
+    }
+  }
+
   console.debug(`Checked cookie prompts`);
 }
 
