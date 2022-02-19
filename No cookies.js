@@ -135,6 +135,76 @@ function noCookies() {
     }
   }
 
+  if (/^https:\/\/[^/]+\.gov\.uk\//.test(document.location.href)) {
+    var global_cookie_message = document.getElementById("global-cookie-message");
+    if (visible(global_cookie_message)) {
+      console.debug(`Found global-cookie-message: ${global_cookie_message.innerText}`);
+
+      var links = global_cookie_message.querySelectorAll("a");
+      for (var i = 0; i < links.length; i++) {
+        if (visible(links[i]) && /^Set cookie preferences$/.test(links[i].innerText)) {
+          console.debug(`Found cookie preferences "button": ${links[i].innerText}`);
+          links[i].click();
+        }
+      }
+    }
+
+    var h1 = document.querySelector("h1");
+    if (visible(h1)) {
+      if (/^Choose which cookies we use\b/.test(h1.innerText)) {
+        console.debug(`Found choose cookies heading: ${h1.innerText}`);
+
+        var found = 0;
+        var inputs = document.querySelectorAll("input[type=radio]");
+        for (var i = 0; i < inputs.length; i++) {
+          var label = document.querySelector(`label[for=${inputs[i].id}]`);
+            if (!label) {
+              console.debug(`Radio input ${inputs[i].id} with no label`);
+              return;
+          } else if (/^Do not use cookies /.test(label.innerText)) {
+            console.debug(`Selecting ${inputs[i].id}: ${label.innerText}`);
+            inputs[i].click();
+
+            if (inputs[i].checked) {
+              found++;
+            }
+          } else if (!(/^Use cookies /.test(label.innerText))) {
+            console.debug(`Unknown radio input ${inputs[i].id}: ${label.innerText}`);
+            return;
+          }
+        }
+
+        for (var i = 0; i < inputs.length; i++) {
+          var label = document.querySelector(`label[for=${inputs[i].id}]`);
+          if ((/^Use cookies /.test(label.innerText) && inputs[i].checked) || (/^Do not use cookies /.test(label.innerText) && !inputs[i].checked)) {
+            console.debug(`Invalid selection: ${inputs[i].id}: ${label.innerText} (${inputs[i].checked})`);
+            found = 0;
+          }
+        }
+
+        if (found > 0) {
+          var buttons = document.querySelectorAll("button");
+          for (var i = 0; i < buttons.length; i++) {
+            if (visible(buttons[i]) && buttons[i].innerText == "Save my cookie preferences") {
+              console.debug(`Found save button`);
+              buttons[i].click();
+            }
+          }
+        }
+      } else if (/^Your cookie settings have been saved\b/.test(h1.innerText)) {
+        console.debug(`Found cookie settings saved heading: ${h1.innerText}`);
+
+        var links = document.querySelectorAll("a");
+        for (var i = 0; i < links.length; i++) {
+          if (visible(links[i]) && links[i].innerText == "Back") {
+            console.debug(`Found back link: ${links[i].innerText}`);
+            links[i].click();
+          }
+        }
+      }
+    }
+  }
+
   var tealiumGDPRecModal = document.getElementById("__tealiumGDPRecModal");
   if (visible(tealiumGDPRecModal)) {
     console.debug(`Found tealiumGDPRecModal`);
@@ -155,7 +225,7 @@ function noCookies() {
       if (!label) {
         console.debug(`Radio input ${inputs[i].id} with no label`);
         return;
-      } if (label.innerText == "No") {
+      } else if (label.innerText == "No") {
         console.debug(`Selecting ${inputs[i].id}: ${label.innerText}`);
         inputs[i].click();
 
@@ -172,6 +242,7 @@ function noCookies() {
       var label = tealiumGDPRcpPrefs.querySelector(`label[for=${inputs[i].id}]`);
       if ((label.innerText == "Yes" && inputs[i].checked) || (label.innerText == "No" && !inputs[i].checked)) {
         console.debug(`Invalid selection: ${inputs[i].id}: ${label.innerText} (${inputs[i].checked})`);
+        found = 0;
       }
     }
 
