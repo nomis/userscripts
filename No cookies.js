@@ -39,6 +39,8 @@ function noCookies() {
               console.debug(`Disabled button ${buttons[i].getAttribute("id")}`);
               found++;
             }
+          } else if (buttons[i].getAttribute("aria-pressed") == "false") {
+            found++;
           }
         }
 
