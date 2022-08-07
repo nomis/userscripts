@@ -286,24 +286,10 @@ function noCookies() {
 
     console.debug(`Labelled buttons (${labelled.size}): ${Array.from(labelled.entries())}`);
 
-    if (labelled.size == 2 && labelled.get("I agree") && labelled.get("Customize")) {
-      console.debug(`Found customise button`);
+    if (labelled.size == 2 && labelled.get("Accept all") && labelled.get("Reject all")) {
+      console.debug(`Found reject all button`);
 
-      labelled.get("Customize")[0].click();
-    }
-
-    if (labelled.size == 3 && labelled.get("On") && labelled.get("Off") && labelled.get("Confirm") && labelled.get("On").length == labelled.get("Off").length) {
-      console.debug(`Found on/off/confirm buttons`);
-
-      var off = labelled.get("Off")
-      for (var i = 0; i < off.length; i++) {
-        off[i].click();
-      }
-
-      var confirm = labelled.get("Confirm");
-      if (confirm.length == 1) {
-        confirm[0].click();
-      }
+      labelled.get("Reject all")[0].click();
     }
   }
 
