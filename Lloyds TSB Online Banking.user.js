@@ -43,16 +43,6 @@ for (var i = 0; i < l; i++) {
   }
 }
 
-/* Allow login selection boxes to be controlled by the keyboard */
-var options = document.getElementsByTagName('option');
-var l = options.length;
-for (var i = 0; i < l; i++) {
-  if (options[i].innerText.length == 2 && (options[i].innerText.substring(0, 1) == " " || options[i].innerText.substring(0, 1) == "\u00A0")) {
-    console.log("Fixing login box " + i);
-    options[i].innerText = options[i].innerText.substring(1);
-  }
-}
-
 /* Empty interstitial page */
 if (window.location.href.endsWith("/interstitialpage.jsp")) {
   var cont = document.getElementById("frmMdlSAN:continueBtnSAN");
