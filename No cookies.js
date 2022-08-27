@@ -70,6 +70,22 @@ function noCookies() {
     }
   }
 
+  var userConsentManagement = document.getElementById("user-consent-management-binary-banner-overlay");
+  if (visible(userConsentManagement)) {
+    console.debug(`Found userConsentManagement: ${userConsentManagement.innerText}`);
+
+    if (/Cookie Preferences/.test(userConsentManagement.innerText)) {
+      var buttons = userConsentManagement.querySelectorAll("button");
+      console.debug(`Buttons: ${buttons.length}`);
+      for (var i = 0; i < buttons.length; i++) {
+        if (visible(buttons[i]) && buttons[i].innerText == "Decline") {
+          console.debug(`Found decline button`);
+          buttons[i].click();
+        }
+      }
+    }
+  }
+
   var cookiePolicy = document.querySelectorAll("div.cookiePolicy");
   if (cookiePolicy.length == 1 && visible(cookiePolicy[0])) {
     console.debug(`Found cookiePolicy: ${cookiePolicy[0].innerText}`);
