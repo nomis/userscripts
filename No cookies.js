@@ -13,6 +13,10 @@ function visible(element) {
   return element && !(element.offsetParent === null);
 }
 
+function visibles(elements) {
+  return Array.from(elements).filter(element => visible(element));
+}
+
 function noCookies() {
   console.debug(`Checking cookie prompts`);
 
@@ -118,7 +122,7 @@ function noCookies() {
     var buttons = govuk_cookie_banner[0].querySelectorAll("button");
     for (var i = 0; i < buttons.length; i++) {
       if (/^Reject (additional|analytics) cookies$/.test(buttons[i].innerText)) {
-      	console.debug(`Found reject button: ${buttons[i].innerText}`);
+        console.debug(`Found reject button: ${buttons[i].innerText}`);
         buttons[i].click();
       }
     }
@@ -143,8 +147,8 @@ function noCookies() {
 
     if (/^You(.ve| have) rejected additional cookies/.test(confirmation[0].innerText)) {
       // Now you're just being deliberately annoying
-      var buttons = confirmation[0].querySelectorAll("button");
-      if (buttons.length == 1 && visible(buttons[0])) {
+      var buttons = visibles(govuk_cookie_banner[0].querySelectorAll("button"));
+      if (buttons.length == 1) {
         if (/^Hide\b/.test(buttons[0].innerText)) {
           console.debug(`Found hide button: ${buttons[0].innerText}`);
           buttons[0].click();
@@ -158,11 +162,16 @@ function noCookies() {
     if (visible(global_cookie_message)) {
       console.debug(`Found global-cookie-message: ${global_cookie_message.innerText}`);
 
-      var links = global_cookie_message.querySelectorAll("a");
-      for (var i = 0; i < links.length; i++) {
-        if (visible(links[i]) && /^Set cookie preferences$/.test(links[i].innerText)) {
-          console.debug(`Found cookie preferences "button": ${links[i].innerText}`);
-          links[i].click();
+      if (/^https:\/\/([^/]+\.)?ons\.gov\.uk\//.test(document.location.href)) {
+        console.debug(`Found useless message`);
+        global_cookie_message.parentNode.removeChild(global_cookie_message);
+      } else {
+        var links = global_cookie_message.querySelectorAll("a");
+        for (var i = 0; i < links.length; i++) {
+          if (visible(links[i]) && /^Set cookie preferences$/.test(links[i].innerText)) {
+            console.debug(`Found cookie preferences "button": ${links[i].innerText}`);
+            links[i].click();
+          }
         }
       }
     }
