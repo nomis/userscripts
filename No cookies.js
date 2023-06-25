@@ -257,7 +257,7 @@ function noCookies() {
         inputs[i].click();
 
         if (inputs[i].checked) {
-				  found++;
+          found++;
         }
       } else if (label.innerText != "Yes") {
         console.debug(`Unknown radio input ${inputs[i].id}: ${label.innerText}`);
@@ -583,11 +583,11 @@ function noCookies() {
       }
     } else {
       var links = cmpBanner.querySelectorAll("a");
-			for (var i = 0; i < links.length; i++) {
-	      if (visible(links[i]) && links[i].innerText == "Manage") {
-	        console.debug(`Found manage link`);
-	        links[i].click();
-	      }
+      for (var i = 0; i < links.length; i++) {
+        if (visible(links[i]) && links[i].innerText == "Manage") {
+          console.debug(`Found manage link`);
+          links[i].click();
+        }
       }
     }
   }
