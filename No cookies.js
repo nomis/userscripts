@@ -568,7 +568,7 @@ function noCookies() {
   }
 
   var cmpBanner = document.querySelector("div.gdpr #cmpBanner");
-  if (visible (cmpBanner)) {
+  if (visible(cmpBanner)) {
     console.debug(`Found cmpBanner element`);
 
     var purpPopup = document.querySelector("div.gdpr #purpPopup");
@@ -590,6 +590,12 @@ function noCookies() {
         }
       }
     }
+  }
+
+  var declineAllButton = document.querySelector("#user-consent-management-granular-banner-decline-all-button");
+  if (visible(declineAllButton)) {
+    console.debug(`Found decline all button`);
+    declineAllButton.click();
   }
 
   console.debug(`Checked cookie prompts`);
